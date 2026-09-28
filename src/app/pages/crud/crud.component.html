@@ -1,0 +1,379 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+
+    <div>
+      <span class="small-title">USER MANAGEMENT</span>
+
+      <h1>CRUD Dashboard</h1>
+
+      <p>
+        Manage users, branches and IDs from one place.
+      </p>
+    </div>
+
+    <div class="total-box">
+
+      <span>Total Users</span>
+
+      <strong>{{ users.length }}</strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- Message -->
+  @if (message) {
+
+    <div
+      class="alert"
+      [class.alert-success]="messageType === 'success'"
+      [class.alert-error]="messageType === 'error'">
+
+      {{ message }}
+
+    </div>
+
+  }
+
+
+  <!-- Form Card -->
+  <div class="card form-card">
+
+    <div class="card-header">
+
+      <div class="icon-box">
+        ✨
+      </div>
+
+      <div>
+
+        <h2>
+          {{ editingId ? 'Edit User' : 'Add New User' }}
+        </h2>
+
+        <p>
+          Enter user information below
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <form
+      [formGroup]="userForm"
+      (ngSubmit)="submitForm()">
+
+      <div class="form-grid">
+
+
+        <!-- User ID -->
+        <div class="form-group">
+
+          <label>
+            User ID
+          </label>
+
+          <div class="input-wrapper">
+
+            <span>🆔</span>
+
+            <input
+              type="text"
+              formControlName="userId"
+              placeholder="Enter user ID"
+            />
+
+          </div>
+
+          @if (
+            userForm.get('userId')?.touched &&
+            userForm.get('userId')?.invalid
+          ) {
+
+            <small>
+              User ID is required
+            </small>
+
+          }
+
+        </div>
+
+
+        <!-- Name -->
+        <div class="form-group">
+
+          <label>
+            Name
+          </label>
+
+          <div class="input-wrapper">
+
+            <span>👤</span>
+
+            <input
+              type="text"
+              formControlName="name"
+              placeholder="Enter name"
+            />
+
+          </div>
+
+          @if (
+            userForm.get('name')?.touched &&
+            userForm.get('name')?.invalid
+          ) {
+
+            <small>
+              Name is required
+            </small>
+
+          }
+
+        </div>
+
+
+        <!-- Branch -->
+        <div class="form-group">
+
+          <label>
+            Branch
+          </label>
+
+          <div class="input-wrapper">
+
+            <span>🏢</span>
+
+            <input
+              type="text"
+              formControlName="branch"
+              placeholder="Enter branch"
+            />
+
+          </div>
+
+          @if (
+            userForm.get('branch')?.touched &&
+            userForm.get('branch')?.invalid
+          ) {
+
+            <small>
+              Branch is required
+            </small>
+
+          }
+
+        </div>
+
+      </div>
+
+
+      <div class="form-actions">
+
+        <button
+          type="submit"
+          class="primary-btn"
+          [disabled]="loading">
+
+          @if (editingId) {
+            ✏️ Update User
+          } @else {
+            ➕ Add User
+          }
+
+        </button>
+
+
+        @if (editingId) {
+
+          <button
+            type="button"
+            class="secondary-btn"
+            (click)="resetForm()">
+
+            Cancel
+
+          </button>
+
+        }
+
+      </div>
+
+    </form>
+
+  </div>
+
+
+  <!-- Data Card -->
+  <div class="card data-card">
+
+    <div class="data-header">
+
+      <div>
+
+        <h2>
+          Users List
+        </h2>
+
+        <p>
+          All users stored in MongoDB
+        </p>
+
+      </div>
+
+
+      <button
+        class="fetch-btn"
+        (click)="fetchUsers()"
+        [disabled]="loading">
+
+        🔄 Fetch Data
+
+      </button>
+
+    </div>
+
+
+    @if (users.length > 0) {
+
+      <div class="table-container">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>#</th>
+
+              <th>User ID</th>
+
+              <th>Name</th>
+
+              <th>Branch</th>
+
+              <th>Created</th>
+
+              <th>Actions</th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+              user of users;
+              track user._id;
+              let i = $index
+            ) {
+
+              <tr>
+
+                <td>
+                  <span class="number">
+                    {{ i + 1 }}
+                  </span>
+                </td>
+
+                <td>
+
+                  <span class="user-id">
+                    {{ user.userId }}
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <div class="user-name">
+
+                    <div class="avatar">
+                      {{ user.name.charAt(0).toUpperCase() }}
+                    </div>
+
+                    <strong>
+                      {{ user.name }}
+                    </strong>
+
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <span class="branch">
+                    {{ user.branch }}
+                  </span>
+
+                </td>
+
+                <td>
+
+                  {{ user.createdAt | date:'dd MMM yyyy' }}
+
+                </td>
+
+                <td>
+
+                  <div class="actions">
+
+                    <button
+                      class="edit-btn"
+                      title="Edit"
+                      (click)="editUser(user)">
+
+                      ✏️
+
+                    </button>
+
+                    <button
+                      class="delete-btn"
+                      title="Delete"
+                      (click)="deleteUser(user)">
+
+                      🗑️
+
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    } @else {
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          📋
+        </div>
+
+        <h3>
+          No users found
+        </h3>
+
+        <p>
+          Add a user or click Fetch Data to load records.
+        </p>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>
