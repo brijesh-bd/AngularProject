@@ -17,7 +17,9 @@ export interface User {
 })
 export class UserService {
 
-   private apiUrl = '/api/users';
+   private apiUrl = '/api/crud';
+
+  //  private apiUrl = 'http://localhost:8082/api/crud';
 
   constructor(private http: HttpClient) {}
 
