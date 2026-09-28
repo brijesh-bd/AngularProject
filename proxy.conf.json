@@ -1,0 +1,6 @@
+{
+  "/api": {
+    "target": "https://jupiter.x2ff.com",
+    "secure": false
+  }
+}
